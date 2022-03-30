@@ -4,6 +4,8 @@ import Link from 'next/link';
 import styled from "styled-components";
 import PropTypes from "prop-types";
 import useinput from "../hooks/useinput";
+import {useDispatch} from "react-redux";
+import {loginAction} from "../reducers";
 
 const ButtonWrapper = styled.div`
     margin-top: 10px;
@@ -14,13 +16,15 @@ padding : 10px;
 
 `;
 
-const LoginForm = ({setIsLoggedIn}) => {
+const LoginForm = () => {
+    const dispatch = useDispatch();
+
     const [id, onChangeId] = useinput('');
     const [password, onChangePassword] = useinput('');
 
     const onSubmitForm = useCallback(() => {
       console.log(id, password);
-        setIsLoggedIn(true);
+        dispatch(loginAction({id, password}));
     },[id, password]); //[id, password] 디펜던시로 넘김
 
     return (
@@ -48,11 +52,6 @@ const LoginForm = ({setIsLoggedIn}) => {
         </FormWrapper>
 
     );
-}
-
-LoginForm.propType = {
-    setIsLoggedIn: PropTypes.func.isRequired,
-
 }
 
 export default LoginForm;
