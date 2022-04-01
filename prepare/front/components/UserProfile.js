@@ -1,13 +1,13 @@
 import React, {useCallback} from 'react';
 import {Avatar, Button, Card} from "antd";
 import {useDispatch} from "react-redux";
-import {logoutAction} from '../reducers';
+import {logoutAction} from '../reducers/user';
 
 const UserProfile = () => {
-    const dispatch = useDispatch;
+    const dispatch = useDispatch(); // ()를 안 넣어서 오류 났었으나 왜 오류 나는지 못 찾아음..
 
     const onLogOut = useCallback(() => {
-        dispatch(logoutAction());
+        dispatch(logoutAction);
     },[]);
 
     return (
