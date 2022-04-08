@@ -1,13 +1,14 @@
 import React, {useCallback} from 'react';
 import {Avatar, Button, Card} from "antd";
-import {useDispatch} from "react-redux";
-import {logoutAction} from '../reducers/user';
+import {useDispatch, useSelector} from "react-redux";
+import {logoutRequestAction} from '../reducers/user';
 
 const UserProfile = () => {
     const dispatch = useDispatch(); // ()를 안 넣어서 오류 났었으나 왜 오류 나는지 못 찾아음..
+    const {me, isLoggingOut} = useSelector((state) => state.user);
 
     const onLogOut = useCallback(() => {
-        dispatch(logoutAction);
+        dispatch(logoutRequestAction());
     },[]);
 
     return (
@@ -20,11 +21,11 @@ const UserProfile = () => {
                 ]}
             >
                 <Card.Meta
-                    avatar={<Avatar>ZC</Avatar>}
-                    title="ZeroCho"
+                    avatar={<Avatar>me.nickname</Avatar>}
+                    title={me.nickname}
                 />
             </Card>
-            <Button onClick={onLogOut}>로그아웃</Button>
+            <Button onClick={onLogOut} loading={isLoggingOut}>로그아웃</Button>
         </>
 
     );
