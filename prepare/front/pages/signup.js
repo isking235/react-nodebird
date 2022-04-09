@@ -18,7 +18,7 @@ const Signup = () => {
 	const dispatch = useDispatch();
 	const {signUpLoading} = useSelector((state) => state.user);
 
-	const [email, onChangeId] = useinput('');
+	const [email, onChangeEmail] = useinput('');
 	const [nickname, onChangeNickname] = useinput('');
 	const [password, onChangePassword] = useinput('');
 
