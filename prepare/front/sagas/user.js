@@ -9,7 +9,13 @@ import {
     LOG_OUT_SUCCESS,
     SIGN_UP_SUCCESS,
     SIGN_UP_REQUEST,
-    SIGN_UP_FAILURE
+    SIGN_UP_FAILURE,
+    FOLLOW_REQUEST,
+    UNFOLLOW_REQUEST,
+    FOLLOW_SUCCESS,
+    FOLLOW_FAILURE,
+    UNFOLLOW_SUCCESS,
+    UNFOLLOW_FAILURE
 } from "../reducers/user";
 
 /*이패턴을 복사하여 action을 만든다.*******************************************/
@@ -72,9 +78,56 @@ function* signUp() {
     }
 }
 
+/*******************************************/
+function  followAPI() { //*이 들어 가지 않는다.
+    return axios.post('/api/follow');
+}
+function* follow(action) {
+    try{
+        //const result = yield call(signUpAPI)
+        yield delay(1000);
+        yield put({
+            type: FOLLOW_SUCCESS,
+            data : action.data,
+        });
+    } catch (err) {
+        yield put({ //put은 dispatch 다
+            type: FOLLOW_FAILURE,
+            error: err.response.data,
+        });
+    }
+}
+
+/*******************************************/
+function  unfollowAPI() { //*이 들어 가지 않는다.
+    return axios.post('/api/unfollow');
+}
+function* unfollow(action) {
+    try{
+        //const result = yield call(signUpAPI)
+        yield delay(1000);
+        yield put({
+            type: UNFOLLOW_SUCCESS,
+            data : action.data,
+        });
+    } catch (err) {
+        yield put({ //put은 dispatch 다
+            type: UNFOLLOW_FAILURE,
+            error: err.response.data,
+        });
+    }
+}
+
 //1. 이벤트 리스너 역할을 한다.
 function* watchLogIn() {
     yield takeLatest(LOG_IN_REQUEST, logIn);
+}
+function* watchFollow() {
+    yield takeLatest(FOLLOW_REQUEST, follow);
+}
+
+function* watchUnfollow() {
+    yield takeLatest(UNFOLLOW_REQUEST, unfollow);
 }
 
 function* watchLogOut() {
@@ -87,6 +140,8 @@ function* watchSignUp() {
 
 export default function* userSaga() {
     yield all([
+        fork(watchFollow),
+        fork(watchUnfollow),
         fork(watchLogIn),
         fork(watchLogOut),
         fork(watchSignUp),
