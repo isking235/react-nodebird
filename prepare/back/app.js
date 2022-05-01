@@ -1,4 +1,5 @@
 const express = require('express');
+const postRouter = require('/routes/post');
 const app = express();
 /*
 REST API 정의
@@ -30,15 +31,7 @@ app.get('/api/posts', (req, res) => {
     ]);
 });
 
-app.post('/api/post', (req, res) => {
-    res.json({id: 1, content: 'hello'});
-
-});
-
-app.delete('/api/post', (req, res) => {
-    res.json({id: 1});
-});
-
+app.use('/post', postRouter);
 
 app.listen(3065, () => {
     console.log('서버 실행 중');
