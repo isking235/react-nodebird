@@ -2,9 +2,9 @@
   "name": "react-nodebird-back",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev" : "nodemon app"
   },
   "author": "isking235",
   "license": "ISC",
@@ -13,5 +13,8 @@
     "mysql2": "^2.3.3",
     "sequelize": "^6.19.0",
     "sequelize-cli": "^6.4.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.16"
   }
 }
