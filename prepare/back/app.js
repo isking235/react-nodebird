@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 const postRouter = require('./routes/post');
 const userRouter = require('./routes/user');
 const db = require('./models');
@@ -10,6 +11,9 @@ db.sequelize.sync()
     .catch(console.error);
 
 //req.body 를 사용하기 위해 아래 구문 입력 필요
+app.use(cors({
+    origin:'*',
+}));
 app.use(express.json()); //front에서 json 형태로 넘오오면 body에 붙여 준다.
 app.use(express.urlencoded({extended: true})); //form submitcd
 

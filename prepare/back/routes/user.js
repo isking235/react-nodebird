@@ -1,10 +1,10 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
-const {user} = require('../models');
+const {User} = require('../models');
 
-const reuter = express.Router();
+const router = express.Router();
 
-reuter.post('/', async (req, res, next) => { //POST /user/
+router.post('/', async (req, res, next) => { //POST /user/
 
     try {
         const exUser = await User.findOne({
@@ -23,7 +23,7 @@ reuter.post('/', async (req, res, next) => { //POST /user/
             password: hashedPassword,
 
         });
-        res.send('ok');
+        res.status(201).send('ok');
     }catch (error) {
         console.error(error);
         next(error);
