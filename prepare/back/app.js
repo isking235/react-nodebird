@@ -1,8 +1,17 @@
 const express = require('express');
 const cors = require('cors');
+const session = require('express-session');
+const cookieparser = require('cookie-parser');
+const passport = require('passport');
+const dotenv = require('dotenv');
+
+
 const postRouter = require('./routes/post');
 const userRouter = require('./routes/user');
 const db = require('./models');
+const passportConfig = require('./passport');
+
+dotenv.config();
 const app = express();
 db.sequelize.sync()
     .then(() => {
@@ -16,7 +25,14 @@ app.use(cors({
 }));
 app.use(express.json()); //front에서 json 형태로 넘오오면 body에 붙여 준다.
 app.use(express.urlencoded({extended: true})); //form submitcd
-
+app.use(session());
+app.use(cookieparser('nodebirdsecret'));
+app.use(passport.initialize());
+app.use(passport.session({
+    saveUninitialized : false,
+    resave : false,
+    secret : 'nodebirdsecret',
+}));
 
 /*
 REST API 정의

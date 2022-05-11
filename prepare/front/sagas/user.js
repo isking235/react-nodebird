@@ -21,17 +21,16 @@ import {
 /*이패턴을 복사하여 action을 만든다.*******************************************/
 //4. logIn() 에서 call 로 실행 한다.(비동기)
 function  loginAPI(data) { //*이 들어 가지 않는다.
-    return axios.post('/api/login', data)
+    return axios.post('/user/login', data);
 }
 //3. LOG_IN_REQUEST 실행되면 login() 가 실행된다.
 function* logIn(action) { //매개변수가 들어옴
     try{
-        console.log('saga logIn');
-        //const result = yield call(loginAPI, action.data);
+        const result = yield call(loginAPI, action.data);
         yield delay(1000);
         yield put({
             type: LOG_IN_SUCCESS,
-            data : action.data,
+            data : result.data,
         });
     } catch (err) {
         yield put({ //put은 dispatch 다
@@ -42,7 +41,7 @@ function* logIn(action) { //매개변수가 들어옴
 }
 /*******************************************/
 function  logOutAPI() { //*이 들어 가지 않는다.
-    return axios.post('/api/logout');
+    return axios.post('/user/logout');
 }
 function* logOut() {
     try{
@@ -61,7 +60,7 @@ function* logOut() {
 
 /*******************************************/
 function  signUpAPI(data) { //*이 들어 가지 않는다.
-    return axios.post('http://localhost:3065/user',data);
+    return axios.post('/user',data);
 }
 function* signUp(action) {
     try{
