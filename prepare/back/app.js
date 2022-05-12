@@ -18,6 +18,7 @@ db.sequelize.sync()
         console.log('db 연결 성공');
     })
     .catch(console.error);
+passportConfig();
 
 //req.body 를 사용하기 위해 아래 구문 입력 필요
 app.use(cors({
@@ -25,8 +26,13 @@ app.use(cors({
 }));
 app.use(express.json()); //front에서 json 형태로 넘오오면 body에 붙여 준다.
 app.use(express.urlencoded({extended: true})); //form submitcd
-app.use(session());
 app.use(cookieparser('nodebirdsecret'));
+app.use(session({
+    saveUninitialized : false,
+    resave : false,
+    secret : process.env.COOKIE_SECRET,
+}));
+
 app.use(passport.initialize());
 app.use(passport.session({
     saveUninitialized : false,

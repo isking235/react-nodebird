@@ -17,11 +17,17 @@ const ErrorMessage = styled.div`
 
 const Signup = () => {
 	const dispatch = useDispatch();
-	const {signUpLoading, signUpDone, signUpError} = useSelector((state) => state.user);
+	const {signUpLoading, signUpDone, signUpError, me} = useSelector((state) => state.user);
+
+	useEffect(() => {
+		if (me && me.id) {
+			Router.replace('/');
+		}
+	}, [me && me.id]);
 
 	useEffect(() => {
 		if (signUpDone) {
-			Router.push('/');
+			Router.replace('/'); //push는 뒤로 가기 하면 이전 페이지 갈수 있다. 그래서 replace는 이전 페이지가 사라짐
 		}
 	}, [signUpDone]);
 
