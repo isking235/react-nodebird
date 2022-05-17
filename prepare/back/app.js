@@ -73,6 +73,13 @@ app.get('/api/posts', (req, res) => {
 app.use('/post', postRouter);
 app.use('/user', userRouter);
 
+//에러처리 미들웨어는 숨겨 있다.
+//사용자 재정의 필요하여 정의한다.
+/*app.use((err, req, res, next) => {
+
+
+});*/
+
 app.listen(3065, () => {
     console.log('서버 실행 중!');
 });

@@ -38,25 +38,21 @@ function* loadPosts(action) {
 
 /*******************************************/
 function  addPostAPI(data) { //*이 들어 가지 않는다.
-    return axios.post('/api/post', data);
+    return axios.post('/post', {content: data});
 }
 function* addPost(action) {
     try{
-        //const result = yield call(addPostAPI, action.data)
-        yield delay(1000);
+        const result = yield call(addPostAPI, action.data);
         const id = shortId.generate();
 
         yield put({
             type: ADD_POST_SUCCESS,
-            data: {
-                id,
-                content : action.data,
-            },
+            data: result.data,
         });
         //POST에서 User 의  post를 더해 준다. post action 에서 user를 변경
         yield put({
             type : ADD_POST_TO_ME,
-            data : id,
+            data : result.data.id,
         })
     } catch (err) {
         yield put({ //put은 dispatch 다
@@ -96,15 +92,14 @@ function* removePost(action) {
 
 /*******************************************/
 function  addCommentAPI(data) { //*이 들어 가지 않는다.
-    return axios.post('/api/post/${data.postId}/comment', data);
+    return axios.post(`/post/${data.postId}/comment1`, data); //POST /post/1/comment
 }
 function* addComment(action) {
     try{
-        //const result = yield call(addCommentAPI, action.data)
-        yield delay(1000);
+        const result = yield call(addCommentAPI, action.data)
         yield put({
             type: ADD_COMMENT_SUCCESS,
-            data: action.data,
+            data: result.data,
         });
     } catch (err) {
         yield put({ //put은 dispatch 다
