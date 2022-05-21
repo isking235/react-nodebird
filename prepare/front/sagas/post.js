@@ -1,5 +1,5 @@
 import axios from "axios";
-import {all, fork, put, takeLatest, delay,throttle} from 'redux-saga/effects';
+import {all, fork, put, takeLatest, delay,throttle,call} from 'redux-saga/effects';
 import {
     ADD_POST_REQUEST,
     ADD_POST_SUCCESS,
@@ -38,12 +38,11 @@ function* loadPosts(action) {
 
 /*******************************************/
 function  addPostAPI(data) { //*이 들어 가지 않는다.
-    return axios.post('/post', {content: data});
+    return axios.post('/post', {content : data});
 }
 function* addPost(action) {
     try{
         const result = yield call(addPostAPI, action.data);
-        const id = shortId.generate();
 
         yield put({
             type: ADD_POST_SUCCESS,
