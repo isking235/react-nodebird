@@ -9,24 +9,20 @@ import {
     ADD_COMMENT_FAILURE,
     REMOVE_POST_SUCCESS,
     REMOVE_POST_FAILURE,
-    REMOVE_POST_REQUEST, LOAD_POSTS_REQUEST, LOAD_POSTS_SUCCESS, LOAD_POSTS_FAILURE, generateDummyPost,
+    REMOVE_POST_REQUEST, LOAD_POSTS_REQUEST, LOAD_POSTS_SUCCESS, LOAD_POSTS_FAILURE,
 } from "../reducers/post";
 import {ADD_POST_TO_ME, REMOVE_POST_OF_ME} from "../reducers/user";
-import shortId from "shortid";
 
 /*******************************************/
 function  loadPostsAPI(data) { //*이 들어 가지 않는다.
-    return axios.post('/api/posts', data);
+    return axios.get('/posts', data);
 }
 function* loadPosts(action) {
     try{
-        //const result = yield call(addPostAPI, action.data)
-        yield delay(1000);
-        const id = shortId.generate();
-
+        const result = yield call(loadPostsAPI, action.data)
         yield put({
             type: LOAD_POSTS_SUCCESS,
-            data: generateDummyPost(10),
+            data: result.data,
         });
     } catch (err) {
         yield put({ //put은 dispatch 다
@@ -91,7 +87,7 @@ function* removePost(action) {
 
 /*******************************************/
 function  addCommentAPI(data) { //*이 들어 가지 않는다.
-    return axios.post(`/post/${data.postId}/comment1`, data); //POST /post/1/comment
+    return axios.post(`/post/${data.postId}/comment`, data); //POST /post/1/comment
 }
 function* addComment(action) {
     try{
@@ -101,6 +97,7 @@ function* addComment(action) {
             data: result.data,
         });
     } catch (err) {
+        console.error(err);
         yield put({ //put은 dispatch 다
             type: ADD_COMMENT_FAILURE,
             data: err.response.data,

@@ -4,7 +4,7 @@ const {Post, Image, Comment,User} = require('../models');
 const router = express.Router();
 const {isLoggedIn} = require('./middlewares');
 
-router.post('/', isLoggedIn,async (req, res) => { //POST /post
+router.post('/', isLoggedIn,async (req, res, next) => { //POST /post
     try {
         const post = await Post.create({
             content: req.body.content,
@@ -17,8 +17,13 @@ router.post('/', isLoggedIn,async (req, res) => { //POST /post
                 model: Image,
             }, {
                 model : Comment,
+                include : [{
+                    model : User,
+                    attributes: ['id', 'nickname'],
+                }]
             }, {
                 model : User,
+                attributes: ['id', 'nickname'],
             }]
         })
         res.status(201).json(fullPost);
@@ -29,9 +34,9 @@ router.post('/', isLoggedIn,async (req, res) => { //POST /post
     }
 });
 
-router.post('/:postId/comment', isLoggedIn, async (req, res) => { //POST /post/1/comment
+router.post('/:postId/comment', isLoggedIn, async (req, res,next) => { //POST /post/1/comment
     try {
-        await Post.findOne({
+        const post = await Post.findOne({
             where: {id: req.params.postId},
         });
 
@@ -40,11 +45,24 @@ router.post('/:postId/comment', isLoggedIn, async (req, res) => { //POST /post/1
         }
 
         const comment = await Comment.create({
-            content : req.body.content,
-            PostId : req.params.postId,
-            UserId : req.user.id,
-        })
-        res.status(201).json(post);
+            content: req.body.content,
+            PostId: parseInt(req.params.postId),
+            UserId: req.user.id,
+        });
+
+        //nickname가 없음 해결
+        const fullComment = await Comment.findOne({
+            where: {id: comment.id},
+            include: [{
+                model: User,
+                attributes: ['id', 'nickname'],
+
+            }],
+
+        });
+
+
+        res.status(201).json(fullComment);
 
     } catch (error) {
         console.error(error);
