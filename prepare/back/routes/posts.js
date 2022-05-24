@@ -22,7 +22,12 @@ router.get('/', async (req, res, next) => {
                 include:[{
                     model : User,
                     attributes: ['id', 'nickname'],
+                    order: [['createAt', 'DESC']],
                 }]
+            }, {
+                model : User, //좋아요 누른 사람
+                as : 'Likers',
+                attributes: ['id'],
             }],
         });
         console.log(posts);
