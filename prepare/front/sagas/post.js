@@ -112,7 +112,7 @@ function* removePost(action) {
         //POST에서 User 의  post를 더해 준다. post action 에서 user를 변경
         yield put({
             type : REMOVE_POST_OF_ME,
-            data : result.data,
+            data : action.data,
         })
     } catch (err) {
         console.error(err);
