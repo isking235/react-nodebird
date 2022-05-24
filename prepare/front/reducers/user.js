@@ -27,14 +27,6 @@ export const initialState = {
     loginData: {},
 };
 
-const dummyUser = (data) => ({
-    ...data,
-    nickname:'제로초',
-    id : 1,
-    Posts : [],
-    Followings: [{ nickname: '부기초' }, { nickname: 'Chanho Lee' }, { nickname: 'neue zeal' }],
-    Followers: [{ nickname: '부기초' }, { nickname: 'Chanho Lee' }, { nickname: 'neue zeal' }],
-});
 
 export const LOAD_USER_REQUEST = 'LOAD_USER_REQUEST';
 export const LOAD_USER_SUCCESS = 'LOAD_USER_SUCCESS';// 액션의 이름
@@ -188,6 +180,7 @@ const reducer = (state = initialState, action) => produce(state, (draft) => {
                 break;
 
             case CHANGE_NICKNAME_SUCCESS:
+                draft.me.nickname = action.data.nickname;
                 draft.changeNicknameLoading =  false;
                 draft.changeNicknameDone =  true;
                 break;

@@ -100,22 +100,19 @@ function* addPost(action) {
 
 /*******************************************/
 function  removePostAPI(data) { //*이 들어 가지 않는다.
-    return axios.post('/api/logout', data);
+    return axios.delete(`/post/${data}`);
 }
 function* removePost(action) {
     try{
-        //const result = yield call(addPostAPI, action.data)
-        yield delay(1000);
-        const id = shortId.generate();
-
+        const result = yield call(removePostAPI, action.data)
         yield put({
             type: REMOVE_POST_SUCCESS,
-            data: action.data,
+            data: result.data,
         });
         //POST에서 User 의  post를 더해 준다. post action 에서 user를 변경
         yield put({
             type : REMOVE_POST_OF_ME,
-            data : action.data,
+            data : result.data,
         })
     } catch (err) {
         console.error(err);
