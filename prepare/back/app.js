@@ -5,7 +5,7 @@ const cookieparser = require('cookie-parser');
 const passport = require('passport');
 const dotenv = require('dotenv');
 const morgan = require('morgan');
-
+const path = require('path');
 
 const postRouter = require('./routes/post');
 const postsRouter = require('./routes/posts');
@@ -28,6 +28,7 @@ app.use(cors({
     origin:'http://localhost:3060',
     credentials:true, //cors 대비 쿠키를 보내준다.
 }));
+app.use('/', express.static(path.join(__dirname, 'uploads')));
 app.use(express.json()); //front에서 json 형태로 넘오오면 body에 붙여 준다.
 app.use(express.urlencoded({extended: true})); //form submitcd
 app.use(cookieparser('nodebirdsecret'));

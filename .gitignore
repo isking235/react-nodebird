@@ -149,3 +149,6 @@ out
 gen
 build
 rebel.xml
+
+#upload 제외
+/prepare/back/uploads

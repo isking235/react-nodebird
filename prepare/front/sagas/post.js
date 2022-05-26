@@ -99,7 +99,7 @@ function* loadPosts(action) {
 
 /*******************************************/
 function  addPostAPI(data) { //*이 들어 가지 않는다.
-    return axios.post('/post', {content : data});
+    return axios.post('/post', data);
 }
 function* addPost(action) {
     try{
