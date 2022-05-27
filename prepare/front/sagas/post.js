@@ -1,5 +1,5 @@
 import axios from "axios";
-import {all, fork, put, takeLatest, delay,throttle,call} from 'redux-saga/effects';
+import {all, fork, put, takeLatest,throttle,call} from 'redux-saga/effects';
 import {
     ADD_POST_REQUEST,
     ADD_POST_SUCCESS,
@@ -19,9 +19,33 @@ import {
     LIKE_POST_FAILURE,
     UNLIKE_POST_FAILURE,
     UNLIKE_POST_REQUEST,
-    UPLOAD_IMAGES_REQUEST, UPLOAD_IMAGES_SUCCESS, UPLOAD_IMAGES_FAILURE,
+    UPLOAD_IMAGES_REQUEST,
+    UPLOAD_IMAGES_SUCCESS,
+    UPLOAD_IMAGES_FAILURE,
+    RETWEET_SUCCESS,
+    RETWEET_REQUEST,
+    RETWEET_FAILURE,
 } from "../reducers/post";
 import {ADD_POST_TO_ME, REMOVE_POST_OF_ME} from "../reducers/user";
+
+/*******************************************/
+function  retweetAPI(data) { //*이 들어 가지 않는다.
+    return axios.post(`/post/${data}/retweet`);
+}
+function* retweet(action) {
+    try{
+        const result = yield call(retweetAPI, action.data)
+        yield put({
+            type: RETWEET_SUCCESS,
+            data: result.data,
+        });
+    } catch (err) {
+        yield put({ //put은 dispatch 다
+            type: RETWEET_FAILURE,
+            error: err.response.data,
+        });
+    }
+}
 
 /*******************************************/
 function  uploadImagesAPI(data) { //*이 들어 가지 않는다.
@@ -37,7 +61,7 @@ function* uploadImages(action) {
     } catch (err) {
         yield put({ //put은 dispatch 다
             type: UPLOAD_IMAGES_FAILURE,
-            data: err.response.data,
+            error: err.response.data,
         });
     }
 }
@@ -56,7 +80,7 @@ function* likePost(action) {
     } catch (err) {
         yield put({ //put은 dispatch 다
             type: LIKE_POST_FAILURE,
-            data: err.response.data,
+            error: err.response.data,
         });
     }
 }
@@ -74,7 +98,7 @@ function* unlikePost(action) {
     } catch (err) {
         yield put({ //put은 dispatch 다
             type: UNLIKE_POST_FAILURE,
-            data: err.response.data,
+            error: err.response.data,
         });
     }
 }
@@ -92,7 +116,7 @@ function* loadPosts(action) {
     } catch (err) {
         yield put({ //put은 dispatch 다
             type: LOAD_POSTS_FAILURE,
-            data: err.response.data,
+            error: err.response.data,
         });
     }
 }
@@ -117,7 +141,7 @@ function* addPost(action) {
     } catch (err) {
         yield put({ //put은 dispatch 다
             type: ADD_POST_FAILURE,
-            data: err.response.data,
+            error: err.response.data,
         });
     }
 }
@@ -142,7 +166,7 @@ function* removePost(action) {
         console.error(err);
         yield put({ //put은 dispatch 다
             type: REMOVE_POST_FAILURE,
-            data: err.response.data,
+            error: err.response.data,
         });
     }
 }
@@ -162,9 +186,12 @@ function* addComment(action) {
         console.error(err);
         yield put({ //put은 dispatch 다
             type: ADD_COMMENT_FAILURE,
-            data: err.response.data,
+            error: err.response.data,
         });
     }
+}
+function* watchRetweet() {
+    yield takeLatest(RETWEET_REQUEST, retweet);
 }
 
 function* watchUploadImages() {
@@ -198,6 +225,7 @@ function* watchAddComment() {
 
 export default function* postSaga() {
     yield all([
+        fork(watchRetweet),
         fork(watchUploadImages),
         fork(watchLikePost),
         fork(watchUnlikePost),
