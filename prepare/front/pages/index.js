@@ -36,8 +36,10 @@ const Home = () => {
 			* */
 			if(window.scrollY + document.documentElement.clientHeight > document.documentElement.scrollHeight-300) {
 				if (hasMorePosts && !loadPostsLoading) {
+					const lastId = mainPosts[mainPosts.length - 1]?.id; //mainPosts 가 undifined 될수도 있기때문에 ?.id를 한다.
 					dispatch({
 						type : LOAD_POSTS_REQUEST,
+						lastId,
 					});
 				}
 			}
