@@ -5,14 +5,15 @@ import styled from "styled-components";
 
 import AppLayout from '../components/AppLayout';
 import useinput from "../hooks/useinput";
-import {SIGN_UP_REQUEST} from "../reducers/user";
+import {LOAD_MY_INFO_REQUEST, SIGN_UP_REQUEST} from "../reducers/user";
 import {useDispatch, useSelector} from "react-redux";
 import Router from "next/router";
+import axios from "axios";
+import {END} from "redux-saga";
 
 const ErrorMessage = styled.div`
 	color: red;
 `
-
 
 
 const Signup = () => {
@@ -39,7 +40,6 @@ const Signup = () => {
 	}, [signUpError]);
 
 
-
 	const [email, onChangeEmail] = useinput('');
 	const [nickname, onChangeNickname] = useinput('');
 	const [password, onChangePassword] = useinput('');
@@ -50,7 +50,7 @@ const Signup = () => {
 	const onChangePasswordCheck = useCallback((e) => {
 		setPasswordCheck(e.target.value);
 		setPasswordError(e.target.value !== password);
-	},[password]);
+	}, [password]);
 
 
 	const [term, setTerm] = useState('');
@@ -58,24 +58,24 @@ const Signup = () => {
 	const onChangeTerm = useCallback((e) => {
 		setTerm(e.target.checked);
 		setTermError(false);
-	},[]);
+	}, []);
 
 
 	const onSubmit = useCallback(() => {
-		if(password !== passwordCheck) {
+		if (password !== passwordCheck) {
 			return setPasswordError(true);
 		}
 
-		if(!term) {
+		if (!term) {
 			return setTermError(true);
 		}
-		console.log(email,nickname, password);
+		console.log(email, nickname, password);
 		dispatch({
-			type : SIGN_UP_REQUEST,
+			type: SIGN_UP_REQUEST,
 			data: {email, password, nickname}
 		});
 
-	},[email, password, passwordCheck, term]);
+	}, [email, password, passwordCheck, term]);
 
 
 	return (
@@ -91,17 +91,17 @@ const Signup = () => {
 				</div>
 				<div>
 					<label htmlFor="user-nick">닉네임</label>
-					<br />
-					<Input name="user-nick" value={nickname} required onChange={onChangeNickname} />
+					<br/>
+					<Input name="user-nick" value={nickname} required onChange={onChangeNickname}/>
 				</div>
 				<div>
 					<label htmlFor="user-password">비밀번호</label>
-					<br />
-					<Input name="user-password" type="password" value={password} required onChange={onChangePassword} />
+					<br/>
+					<Input name="user-password" type="password" value={password} required onChange={onChangePassword}/>
 				</div>
 				<div>
 					<label htmlFor="user-password-check">비밀번호체크</label>
-					<br />
+					<br/>
 					<Input
 						name="user-password-check"
 						type="password"
@@ -115,13 +115,28 @@ const Signup = () => {
 					<Checkbox name="user-term" checked={term} onChange={onChangeTerm}>제로초 말을 잘 들을 것을 동의합니다.</Checkbox>
 					{termError && <ErrorMessage>약관에 동의하셔야 합니다.</ErrorMessage>}
 				</div>
-				<div style={{ marginTop: 10 }}>
+				<div style={{marginTop: 10}}>
 					<Button type="primary" htmlType="submit" loading={signUpLoading}>가입하기</Button>
 				</div>
 			</Form>
 		</AppLayout>
-		
-		);
-}
 
+	);
+};
+
+export const getServerSideProps = wrapper.getServerSideProps(async (context) => {
+	console.log('getServerSideProps start');
+	console.log(context.req.headers);
+	const cookie = context.req ? context.req.headers.cookie : '';
+	axios.defaults.headers.Cookie = '';
+	if (context.req && cookie) {
+		axios.defaults.headers.Cookie = cookie;
+	}
+	context.store.dispatch({
+		type: LOAD_MY_INFO_REQUEST,
+	});
+	context.store.dispatch(END);
+	console.log('getServerSideProps end');
+	await context.store.sagaTask.toPromise();
+});
 export default Signup;

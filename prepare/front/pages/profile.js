@@ -6,6 +6,7 @@ import Router from "next/router";
 import AppLayout from '../components/AppLayout';
 import NicknameEditForm from "../components/NicknameEditForm";
 import FollowList from "../components/FollowList";
+import axios from "axios";
 
 
 const Profile = () => {
@@ -34,4 +35,21 @@ const Profile = () => {
 
 	);
 };
+
+export const getServerSideProps = wrapper.getServerSideProps(async (context) => {
+	console.log('getServerSideProps start');
+	console.log(context.req.headers);
+	const cookie = context.req ? context.req.headers.cookie : '';
+	axios.defaults.headers.Cookie = '';
+	if (context.req && cookie) {
+		axios.defaults.headers.Cookie = cookie;
+	}
+	context.store.dispatch({
+		type: LOAD_MY_INFO_REQUEST,
+	});
+	context.store.dispatch(END);
+	console.log('getServerSideProps end');
+	await context.store.sagaTask.toPromise();
+});
+
 export default Profile;
