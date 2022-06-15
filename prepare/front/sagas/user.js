@@ -18,7 +18,12 @@ import {
     UNFOLLOW_FAILURE,
     LOAD_USER_SUCCESS,
     LOAD_USER_FAILURE,
-    LOAD_USER_REQUEST, CHANGE_NICKNAME_REQUEST, CHANGE_NICKNAME_FAILURE, CHANGE_NICKNAME_SUCCESS
+    LOAD_USER_REQUEST,
+    CHANGE_NICKNAME_REQUEST,
+    CHANGE_NICKNAME_FAILURE,
+    CHANGE_NICKNAME_SUCCESS,
+    LOAD_MY_INFO_REQUEST,
+    LOAD_MY_INFO_SUCCESS, LOAD_MY_INFO_FAILURE
 } from "../reducers/user";
 
 /*******************************************************************/
@@ -44,7 +49,7 @@ function* changeNickname(action) { //매개변수가 들어옴
 
 /*******************************************************************/
 function  loadUserAPI(data) { //*이 들어 가지 않는다.
-    return axios.get('/user');
+    return axios.get(`/user/${data}`);
 }
 
 function* loadUser(action) { //매개변수가 들어옴
@@ -63,6 +68,26 @@ function* loadUser(action) { //매개변수가 들어옴
     }
 }
 
+/*******************************************************************/
+function  loadMyInfoAPI(data) { //*이 들어 가지 않는다.
+    return axios.get('/user');
+}
+
+function* loadMyInfo() { //매개변수가 들어옴
+    try{
+        const result = yield call(loadMyInfoAPI);
+        yield put({
+            type: LOAD_MY_INFO_SUCCESS,
+            data : result.data,
+        });
+    } catch (err) {
+        console.error(err);
+        yield put({ //put은 dispatch 다
+            type: LOAD_MY_INFO_FAILURE,
+            error: err.response.data,
+        });
+    }
+}
 /*이패턴을 복사하여 action을 만든다.*******************************************/
 //4. logIn() 에서 call 로 실행 한다.(비동기)
 function  loginAPI(data) { //*이 들어 가지 않는다.
@@ -170,6 +195,10 @@ function* watchLoadUser() {
     yield takeLatest(LOAD_USER_REQUEST, loadUser);
 }
 
+function* watchLoadMyInfo() {
+    yield takeLatest(LOAD_MY_INFO_REQUEST, loadMyInfo);
+}
+
 function* watchFollow() {
     yield takeLatest(FOLLOW_REQUEST, follow);
 }
@@ -191,8 +220,12 @@ function* watchSignUp() {
 
 export default function* userSaga() {
     yield all([
+        //fork(watchRemoveFollower),
+        //fork(watchLoadFollowers),
+        //fork(watchLoadFOLLOWINGS),
         fork(watchChangeNickname),
         fork(watchLoadUser),
+        fork(watchLoadMyInfo),
         fork(watchFollow),
         fork(watchUnfollow),
         fork(watchLogIn),
@@ -200,6 +233,5 @@ export default function* userSaga() {
         fork(watchSignUp),
 
 
-
-    ])
+    ]);
 }

@@ -5,8 +5,9 @@ import {END} from 'redux-saga';
 import PostCard from "../components/PostCard";
 import PostForm from "../components/PostForm";
 import {LOAD_POSTS_REQUEST} from "../reducers/post";
-import {LOAD_USER_REQUEST} from "../reducers/user";
+import {LOAD_MY_INFO_REQUEST} from "../reducers/user";
 import wrapper from '../store/configureStore';
+import axios from "axios";
 
 const Home = () => {
 	const dispatch = useDispatch();
@@ -57,8 +58,17 @@ const Home = () => {
 
 //화면 읽을떄 부터 유저와 포스트 정보를 읽어 온다.
 export const getServerSideProps = wrapper.getServerSideProps(async (context) => {
+	const cookie = context.req ? context.req.headers.cookie : '';
+	axios.defaults.headers.Cookie = ''; // 내 정보가 누출될 염려가 있따
+	if(context.req && cookie) {
+		axios.defaults.headers.Cookie = cookie; // 내 정보가 누출될 염려가 있따
+	}
+
+
+
+
 	context.store.dispatch({
-		type : LOAD_USER_REQUEST,
+		type : LOAD_MY_INFO_REQUEST,
 	});
 	context.store.dispatch({
 		type : LOAD_POSTS_REQUEST,

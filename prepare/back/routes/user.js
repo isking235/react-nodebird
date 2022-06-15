@@ -8,6 +8,7 @@ const passport = require('passport');
 const router = express.Router();
 
 router.get('/', async (req, res, next) => { // GET /user
+    console.log(req.headers);
     try {
         if (req.user) {
             const fullUserWithoutPassword = await User.findOne({

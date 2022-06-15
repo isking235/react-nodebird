@@ -118,6 +118,7 @@ function* loadPosts(action) {
             type: LOAD_POSTS_FAILURE,
             error: err.response.data,
         });
+
     }
 }
 
