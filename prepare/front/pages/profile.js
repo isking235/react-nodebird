@@ -1,22 +1,45 @@
 import React, {useEffect} from 'react';
 import Head from 'next/head';
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import Router from "next/router";
 
 import AppLayout from '../components/AppLayout';
 import NicknameEditForm from "../components/NicknameEditForm";
 import FollowList from "../components/FollowList";
+import { LOAD_FOLLOWERS_REQUEST, LOAD_FOLLOWINGS_REQUEST } from '../reducers/user';
 import axios from "axios";
+import useSWR from 'swr';
 
+const fetcher = (url) => axios.get(url, {withCredentials: true}).then((result) => result.data);
 
 const Profile = () => {
+	const dispatch = useDispatch();
 	const {me} = useSelector((state) => state.user);
+
+	useEffect(() => {
+		dispatch({
+			type: LOAD_FOLLOWERS_REQUEST,
+		});
+		dispatch({
+			type: LOAD_FOLLOWINGS_REQUEST,
+		});
+	}, []);
+
+	//const {data: followersData, error:followerError}	= userSWR('http://localhost:2065/user/followers', fetcher);
+	//const {data: followingsData, error:followingError}	= userSWR('http://localhost:2065/user/followings', fetcher);
+
 	//로그인 안했을때 프로필 화면 나오지 않도록 한다.
 	useEffect(() => {
 		if(!(me && me.id)) {
 			Router.push('/');
 		}
 	},[me && me.id]);
+
+	// *** return 이 훅스보다 위에 있을수 없어 아래로 내려 왔다. useselect, userSWR, useEffect
+	/*if(followingError || followerError) {
+		console.error(followerError || followingError);
+		return <div>'팔로잉/팔로워 로딩 중 에러가 발생합니다.'</div>;
+	}*/
 
 	if(!me) {
 		return null;
@@ -35,7 +58,7 @@ const Profile = () => {
 
 	);
 };
-
+/*
 export const getServerSideProps = wrapper.getServerSideProps(async (context) => {
 	console.log('getServerSideProps start');
 	console.log(context.req.headers);
@@ -50,6 +73,6 @@ export const getServerSideProps = wrapper.getServerSideProps(async (context) => 
 	context.store.dispatch(END);
 	console.log('getServerSideProps end');
 	await context.store.sagaTask.toPromise();
-});
+});*/
 
 export default Profile;
