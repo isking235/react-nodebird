@@ -1,48 +1,47 @@
-import React, {useEffect} from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import Head from 'next/head';
-import {useDispatch, useSelector} from "react-redux";
-import Router from "next/router";
-
-import AppLayout from '../components/AppLayout';
-import NicknameEditForm from "../components/NicknameEditForm";
-import FollowList from "../components/FollowList";
-import { LOAD_FOLLOWERS_REQUEST, LOAD_FOLLOWINGS_REQUEST } from '../reducers/user';
-import axios from "axios";
+import { useSelector } from 'react-redux';
+import Router from 'next/router';
+import { END } from 'redux-saga';
+import axios from 'axios';
 import useSWR from 'swr';
 
-const fetcher = (url) => axios.get(url, {withCredentials: true}).then((result) => result.data);
+import AppLayout from '../components/AppLayout';
+import NicknameEditForm from '../components/NicknameEditForm';
+import FollowList from '../components/FollowList';
+import { LOAD_MY_INFO_REQUEST } from '../reducers/user';
+import wrapper from '../store/configureStore';
+
+const fetcher = (url) => axios.get(url, { withCredentials: true }).then((result) => result.data);
 
 const Profile = () => {
-	const dispatch = useDispatch();
-	const {me} = useSelector((state) => state.user);
+	const [followingsLimit, setFollowingsLimit] = useState(3);
+	const [followersLimit, setFollowersLimit] = useState(3);
+	const { data: followingsData, error: followingError } = useSWR(`http://localhost:3065/user/followings?limit=${followingsLimit}`, fetcher);
+	const { data: followersData, error: followerError } = useSWR(`http://localhost:3065/user/followers?limit=${followersLimit}`, fetcher);
+	const { me } = useSelector((state) => state.user);
 
 	useEffect(() => {
-		dispatch({
-			type: LOAD_FOLLOWERS_REQUEST,
-		});
-		dispatch({
-			type: LOAD_FOLLOWINGS_REQUEST,
-		});
-	}, []);
-
-	//const {data: followersData, error:followerError}	= userSWR('http://localhost:2065/user/followers', fetcher);
-	//const {data: followingsData, error:followingError}	= userSWR('http://localhost:2065/user/followings', fetcher);
-
-	//로그인 안했을때 프로필 화면 나오지 않도록 한다.
-	useEffect(() => {
-		if(!(me && me.id)) {
+		if (!(me && me.id)) {
 			Router.push('/');
 		}
-	},[me && me.id]);
+	}, [me && me.id]);
 
-	// *** return 이 훅스보다 위에 있을수 없어 아래로 내려 왔다. useselect, userSWR, useEffect
-	/*if(followingError || followerError) {
+	const loadMoreFollowers = useCallback(() => {
+		setFollowersLimit((prev) => prev + 3);
+	}, []);
+
+	const loadMoreFollowings = useCallback(() => {
+		setFollowingsLimit((prev) => prev + 3);
+	}, []);
+
+	if (followerError || followingError) {
 		console.error(followerError || followingError);
-		return <div>'팔로잉/팔로워 로딩 중 에러가 발생합니다.'</div>;
-	}*/
+		return '팔로잉/팔로워 로딩 중 에러가 발생했습니다.';
+	}
 
-	if(!me) {
-		return null;
+	if (!me) {
+		return '내 정보 로딩중...';
 	}
 	return (
 		<>
@@ -51,14 +50,13 @@ const Profile = () => {
 			</Head>
 			<AppLayout>
 				<NicknameEditForm />
-				<FollowList header="팔로잉" data={me.Followings} />
-				<FollowList header="팔로워" data={me.Followers} />
+				<FollowList header="팔로잉" data={followingsData} onClickMore={loadMoreFollowings} loading={!followingError && !followingsData} />
+				<FollowList header="팔로워" data={followersData} onClickMore={loadMoreFollowers} loading={!followerError && !followersData} />
 			</AppLayout>
 		</>
-
 	);
 };
-/*
+
 export const getServerSideProps = wrapper.getServerSideProps(async (context) => {
 	console.log('getServerSideProps start');
 	console.log(context.req.headers);
@@ -73,6 +71,6 @@ export const getServerSideProps = wrapper.getServerSideProps(async (context) => 
 	context.store.dispatch(END);
 	console.log('getServerSideProps end');
 	await context.store.sagaTask.toPromise();
-});*/
+});
 
 export default Profile;
