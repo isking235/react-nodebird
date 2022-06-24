@@ -3,6 +3,8 @@ import PropTypes from "prop-types";
 import {Avatar, Button, Card, Comment, List, Popover} from "antd";
 import {EllipsisOutlined, HeartOutlined, HeartTwoTone, MessageOutlined, RetweetOutlined} from "@ant-design/icons";
 import {useDispatch, useSelector} from "react-redux";
+import moment from 'moment';
+
 import PostImages from "./PostImages";
 import CommentForm from "./CommentForm";
 
@@ -98,6 +100,7 @@ const PostCard = ({post}) => {
                         <Card
                             cover={post.Retweet.Images[0] && <PostImages images={post.Retweet.Images}/>}
                             >
+                            <div style={{float:'right'}}>{moment(post.createdAt).format('YYYY.MM.DD')}</div>
                             <Card.Meta
                                 avatar={<Avatar>{post.Retweet.User.nickname[0]}</Avatar>}
                                 title={post.Retweet.User.nickname}
@@ -106,11 +109,15 @@ const PostCard = ({post}) => {
                         </Card>
                     )
                     : (
-                        <Card.Meta
-                            avatar={<Avatar>{post.User.nickname[0]}</Avatar>}
-                            title={post.User.nickname}
-                            description={<PostCardContent postData={post.content} />}
-                        />
+                        <>
+                            <div style={{float:'right'}}>{moment(post.createdAt).format('YYYY.MM.DD')}</div>
+                            <Card.Meta
+                                avatar={<Avatar>{post.User.nickname[0]}</Avatar>}
+                                title={post.User.nickname}
+                                description={<PostCardContent postData={post.content} />}
+                            />
+                        </>
+
                     )}
                     </Card>
 
