@@ -152,3 +152,7 @@ rebel.xml
 
 #upload 제외
 /prepare/back/uploads
+
+# *.pem EC2  설정파일
+react-nodebird.pem
+*.pem
