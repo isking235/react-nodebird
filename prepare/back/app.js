@@ -35,7 +35,7 @@ if (process.env.NODE_ENV === 'production') {
 
 //req.body 를 사용하기 위해 아래 구문 입력 필요
 app.use(cors({
-    origin:['http://localhost:3060', 'nodebird.com'],
+    origin:['http://localhost:3060', 'nodebird.com','http://15.164.103.95'],
     credentials:true, //cors 대비 쿠키를 보내준다.
 }));
 app.use('/', express.static(path.join(__dirname, 'uploads')));
