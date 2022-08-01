@@ -2,6 +2,7 @@ import React, {useState} from "react";
 import PropTypes from "prop-types";
 import Slick from 'react-slick';
 import {CloseBtn, Global, Header, ImgWrapper, Indicator, Overlay, SlickWrapper} from "./styles";
+import {backUrl} from "../../config/config";
 
 
 
@@ -26,7 +27,7 @@ const ImagesZoom = ({images, onClose}) => {
                             slidesToScroll={1}
                         >
                             {images.map((v) => (
-                                <ImgWrapper key={`http://localhost:3065/${v.src}`}>
+                                <ImgWrapper key={`${backUrl}/${v.src}`}>
                                     <img src={v.src} alt={v.src}/>
                                 </ImgWrapper>
                             ))}
