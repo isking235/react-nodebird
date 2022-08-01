@@ -35,7 +35,7 @@ if (process.env.NODE_ENV === 'production') {
 
 //req.body 를 사용하기 위해 아래 구문 입력 필요
 app.use(cors({
-    origin:['http://localhost:3060', 'nodebird.com','http://15.164.103.95'],
+    origin:['http://localhost:3060', 'http://nodebirdfront.hopto.org'],
     credentials:true, //cors 대비 쿠키를 보내준다.
 }));
 app.use('/', express.static(path.join(__dirname, 'uploads')));
@@ -46,6 +46,11 @@ app.use(session({
     saveUninitialized : false,
     resave : false,
     secret : process.env.COOKIE_SECRET,
+    cookie :{
+        httpOnly : true,
+        secure : false,
+        domain : process.env.NODE_ENV === 'production' && '.hopto.org'
+    }
 }));
 
 app.use(passport.initialize());
