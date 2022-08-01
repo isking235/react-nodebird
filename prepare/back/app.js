@@ -29,15 +29,19 @@ if (process.env.NODE_ENV === 'production') {
     app.use(morgan('combined'));
     app.use(hpp());
     app.use(helmet());
+    //req.body 를 사용하기 위해 아래 구문 입력 필요
+    app.use(cors({
+        origin:'http://nodebirdfront.hopto.org',
+        credentials:true, //cors 대비 쿠키를 보내준다.
+    }));
 } else {
     app.use(morgan('dev'));
+    app.use(cors({
+        origin:true,
+        credentials:true, //cors 대비 쿠키를 보내준다.
+    }));
 }
 
-//req.body 를 사용하기 위해 아래 구문 입력 필요
-app.use(cors({
-    origin:['http://localhost:3060', 'http://nodebirdfront.hopto.org'],
-    credentials:true, //cors 대비 쿠키를 보내준다.
-}));
 app.use('/', express.static(path.join(__dirname, 'uploads')));
 app.use(express.json()); //front에서 json 형태로 넘오오면 body에 붙여 준다.
 app.use(express.urlencoded({extended: true})); //form submitcd
