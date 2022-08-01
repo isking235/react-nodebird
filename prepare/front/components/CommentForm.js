@@ -1,5 +1,5 @@
 import {Button, Form, Input} from "antd";
-import useinput from "../hooks/useinput";
+import useinput from "../hooks/useInput";
 import React, {useCallback, useEffect} from "react";
 import PropTypes from "prop-types";
 import {useDispatch, useSelector} from "react-redux";

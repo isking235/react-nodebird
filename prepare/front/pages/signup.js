@@ -4,7 +4,7 @@ import {Button, Checkbox, Form, Input} from "antd";
 import styled from "styled-components";
 
 import AppLayout from '../components/AppLayout';
-import useinput from "../hooks/useinput";
+import useinput from "../hooks/useInput";
 import {LOAD_MY_INFO_REQUEST, SIGN_UP_REQUEST} from "../reducers/user";
 import {useDispatch, useSelector} from "react-redux";
 import Router from "next/router";
