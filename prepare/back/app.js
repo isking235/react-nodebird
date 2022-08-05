@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const session = require('express-session');
-const cookieparser = require('cookie-parser');
+const cookieParser = require('cookie-parser');
 const passport = require('passport');
 const dotenv = require('dotenv');
 const morgan = require('morgan');
@@ -45,7 +45,7 @@ if (process.env.NODE_ENV === 'production') {
 app.use('/', express.static(path.join(__dirname, 'uploads')));
 app.use(express.json()); //front에서 json 형태로 넘오오면 body에 붙여 준다.
 app.use(express.urlencoded({extended: true})); //form submitcd
-app.use(cookieparser('nodebirdsecret'));
+app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use(session({
     saveUninitialized : false,
     resave : false,
