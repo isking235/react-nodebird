@@ -31,7 +31,7 @@ if (process.env.NODE_ENV === 'production') {
     app.use(helmet());
     //req.body 를 사용하기 위해 아래 구문 입력 필요
     app.use(cors({
-        origin:'http://hopto.org',
+        origin:'http://nodebirdfront.hopto.org',
         credentials:true, //cors 대비 쿠키를 보내준다.
     }));
 } else {
@@ -53,7 +53,7 @@ app.use(session({
     cookie :{
         httpOnly : true,
         secure : false,
-        domain : process.env.NODE_ENV === 'production' && '.hopto.org'
+        domain : process.env.NODE_ENV === 'production' && 'nodebirdfront.hopto.org'
     }
 }));
 
