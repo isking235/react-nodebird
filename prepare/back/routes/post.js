@@ -35,51 +35,48 @@ const upload = multer({
     limits: {fileSize : 20* 1024 * 1024} , //20MB
 });
 
-router.post('/', isLoggedIn, upload.none(), async (req, res, next) => { //POST /post
+router.post('/', isLoggedIn, upload.none(), async (req, res, next) => { // POST /post
     try {
         const hashtags = req.body.content.match(/#[^\s#]+/g);
         const post = await Post.create({
             content: req.body.content,
-            UserId : req.user.id,
+            UserId: req.user.id,
         });
-        if(hashtags) {
+        if (hashtags) {
             const result = await Promise.all(hashtags.map((tag) => Hashtag.findOrCreate({
-                where: {name: tag.slice(1).toLowerCase()},
-
-            })));//[[노드, true], [리액트, true]]
+                where: { name: tag.slice(1).toLowerCase() },
+            }))); // [[노드, true], [리액트, true]]
             await post.addHashtags(result.map((v) => v[0]));
         }
-        if(req.body.image) {
-            if(Array.isArray(req.body.image)) { //이미지를 여러 개 올리면 image:[제로초.png, 부기초.png]
-                const images = await Promise.all(req.body.image.map((image) => Image.create({src: image})));
+        if (req.body.image) {
+            if (Array.isArray(req.body.image)) { // 이미지를 여러 개 올리면 image: [제로초.png, 부기초.png]
+                const images = await Promise.all(req.body.image.map((image) => Image.create({ src: image })));
                 await post.addImages(images);
-            }else { //이미지를 하나만 올리면 image : 제로초.png
-                const image = await Image.create({src: req.body.image});
+            } else { // 이미지를 하나만 올리면 image: 제로초.png
+                const image = await Image.create({ src: req.body.image });
                 await post.addImages(image);
             }
         }
-
         const fullPost = await Post.findOne({
-            where : {id: post.id},
-            include : [{
+            where: { id: post.id },
+            include: [{
                 model: Image,
             }, {
-                model : Comment,
-                include : [{
-                    model : User, //댓글 작성자
+                model: Comment,
+                include: [{
+                    model: User, // 댓글 작성자
                     attributes: ['id', 'nickname'],
-                }]
+                }],
             }, {
-                model : User, //게시글 작성자
+                model: User, // 게시글 작성자
                 attributes: ['id', 'nickname'],
             }, {
-                model : User, //좋아요 누른 사람
-                as : 'Likers',
+                model: User, // 좋아요 누른 사람
+                as: 'Likers',
                 attributes: ['id'],
             }]
         })
         res.status(201).json(fullPost);
-
     } catch (error) {
         console.error(error);
         next(error);
