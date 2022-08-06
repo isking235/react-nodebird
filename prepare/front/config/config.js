@@ -1,1 +1,1 @@
-export const backUrl = 'api.sangho235fornode.ml';
+export const backUrl = 'http://api.sangho235fornode.ml';
