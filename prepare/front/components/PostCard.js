@@ -143,7 +143,7 @@ const PostCard = ({post}) => {
                                 <Comment
                                     author={item.User.nickname}
                                     avatar={(
-                                        <Link href={`/user/$item.User.id}`} prefetch={false}>
+                                        <Link href={`/user/${item.User.id}`} prefetch={false}>
                                             <a><Avatar>{item.User.nickname[0]}</Avatar></a>
                                         </Link>
                                     )}
